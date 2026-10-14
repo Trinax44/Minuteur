@@ -19,12 +19,8 @@ Gratuit, sans pub, fonctionne hors ligne. Les données restent sur le téléphon
 
 ## Mise en ligne (gratuite) avec GitHub Pages
 
-Le workflow `.github/workflows/pages.yml` publie le site à chaque push sur `main`.
-GitHub Pages est gratuit pour un dépôt **public** :
-
-1. Settings → General → *Change repository visibility* → **Public**.
-2. Settings → Pages → *Source* : **GitHub Actions**.
-3. Relancer le workflow (onglet Actions) → l'adresse sera `https://trinax44.github.io/Minuteur/`.
+Le site est servi depuis la branche `gh-pages` ; le workflow `.github/workflows/pages.yml` y recopie `main` à chaque push.
+Adresse : https://trinax44.github.io/Minuteur/
 
 ## Tester en local
 
