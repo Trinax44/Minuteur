@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Minuteur">
+  <title>Minuteur</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="view"></main>
+
+  <nav id="tabbar">
+    <button data-tab="timer" class="tab active">
+      <svg viewBox="0 0 24 24"><path d="M9 1h6v2H9zM19.03 7.39l1.42-1.42-1.41-1.41-1.42 1.42A9 9 0 1 0 19.03 7.39zM12 21a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm-1-12h2v6h-2z"/></svg>
+      <span>Minuteur</span>
+    </button>
+    <button data-tab="workouts" class="tab">
+      <svg viewBox="0 0 24 24"><path d="M6 2h12a1 1 0 0 1 1 1v19l-7-4-7 4V3a1 1 0 0 1 1-1z"/></svg>
+      <span>Entraînements</span>
+    </button>
+    <button data-tab="history" class="tab">
+      <svg viewBox="0 0 24 24"><path d="M5 3h14a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm0 2a1 1 0 0 0-1 1v1h16V6a1 1 0 0 0-1-1H5zm-1 4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9H4zm3 2h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg>
+      <span>Historique</span>
+    </button>
+    <button data-tab="settings" class="tab">
+      <svg viewBox="0 0 24 24"><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.6 7.6 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.6 7.6 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.6 7.6 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.6 7.6 0 0 0 1.7-1l2.5 1 2-3.5zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+      <span>Paramètres</span>
+    </button>
+  </nav>
+
+  <!-- Écran de l'entraînement en cours -->
+  <section id="run" hidden>
+    <header class="run-top">
+      <button class="run-icon" id="run-close" aria-label="Quitter">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg>
+      </button>
+      <div class="run-total">
+        <div class="run-total-label">TEMPS RESTANT</div>
+        <div class="run-total-value" id="run-total">00:00</div>
+      </div>
+      <button class="run-icon" id="run-voice" aria-label="Annonces vocales">
+        <svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.4 1.3 4.5 3.4 6L4.5 21l4.4-2.4c1 .3 2 .4 3.1.4 5.5 0 10-3.6 10-8s-4.5-8-10-8zM7.5 12.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4.5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4.5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+      </button>
+    </header>
+    <div class="run-center">
+      <div class="run-phase" id="run-phase">TRAVAIL 1/4</div>
+      <div class="run-time" id="run-time">00:00</div>
+      <div class="run-next" id="run-next"></div>
+    </div>
+    <div class="run-progress"><div id="run-bar"></div></div>
+    <footer class="run-controls">
+      <button class="run-icon big" id="run-prev" aria-label="Précédent">
+        <svg viewBox="0 0 24 24"><path d="M12 6l-6 6 6 6M19 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      </button>
+      <button class="run-main" id="run-toggle"></button>
+      <button class="run-icon big" id="run-skip" aria-label="Suivant">
+        <svg viewBox="0 0 24 24"><path d="M12 6l6 6-6 6M5 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      </button>
+    </footer>
+  </section>
+
+  <!-- Feuilles modales (éditeur, sélecteurs, confirmations) -->
+  <div id="sheet-root"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
