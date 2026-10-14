@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#0a0c11">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -23,53 +23,59 @@
       <span>Minuteur</span>
     </button>
     <button data-tab="workouts" class="tab">
-      <svg viewBox="0 0 24 24"><path d="M6 2h12a1 1 0 0 1 1 1v19l-7-4-7 4V3a1 1 0 0 1 1-1z"/></svg>
-      <span>Entraînements</span>
+      <svg viewBox="0 0 24 24"><path d="M2 10h2V8a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h8V8a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2h2v4h-2v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3H8v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2H2z"/></svg>
+      <span>Séances</span>
     </button>
     <button data-tab="history" class="tab">
-      <svg viewBox="0 0 24 24"><path d="M5 3h14a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm0 2a1 1 0 0 0-1 1v1h16V6a1 1 0 0 0-1-1H5zm-1 4v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9H4zm3 2h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2z"/></svg>
-      <span>Historique</span>
+      <svg viewBox="0 0 24 24"><path d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+      <span>Suivi</span>
     </button>
     <button data-tab="settings" class="tab">
       <svg viewBox="0 0 24 24"><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.6 7.6 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.6 7.6 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.6 7.6 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.6 7.6 0 0 0 1.7-1l2.5 1 2-3.5zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
-      <span>Paramètres</span>
+      <span>Réglages</span>
     </button>
   </nav>
 
-  <!-- Écran de l'entraînement en cours -->
+  <!-- Écran de la séance en cours -->
   <section id="run" hidden>
     <header class="run-top">
-      <button class="run-icon" id="run-close" aria-label="Quitter">
+      <button class="run-btn" id="run-close" aria-label="Quitter">
         <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg>
       </button>
-      <div class="run-total">
-        <div class="run-total-label">TEMPS RESTANT</div>
-        <div class="run-total-value" id="run-total">00:00</div>
-      </div>
-      <button class="run-icon" id="run-voice" aria-label="Annonces vocales">
-        <svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.4 1.3 4.5 3.4 6L4.5 21l4.4-2.4c1 .3 2 .4 3.1.4 5.5 0 10-3.6 10-8s-4.5-8-10-8zM7.5 12.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4.5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4.5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+      <div class="run-total"><small>RESTANT</small><b id="run-total">00:00</b></div>
+      <button class="run-btn" id="run-voice" aria-label="Annonces vocales">
+        <svg viewBox="0 0 24 24"><path d="M3 9h4l5-4v14l-5-4H3zM15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M3 9h4l5-4v14l-5-4H3z"/></svg>
       </button>
     </header>
-    <div class="run-center">
-      <div class="run-phase" id="run-phase">TRAVAIL 1/4</div>
-      <div class="run-time" id="run-time">00:00</div>
-      <div class="run-next" id="run-next"></div>
+    <div class="run-stage">
+      <div class="run-ex">
+        <div class="run-ex-anim" id="run-anim"></div>
+        <div class="run-ex-name" id="run-name"></div>
+      </div>
+      <div class="ring-wrap">
+        <svg class="ring" viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="54"/><circle class="fg" id="run-ring" cx="60" cy="60" r="54"/></svg>
+        <div class="ring-inner" id="run-inner">
+          <div class="phase-pill" id="run-phase">Effort</div>
+          <div class="run-time" id="run-time">00:00</div>
+          <div class="run-set" id="run-set"></div>
+        </div>
+      </div>
     </div>
-    <div class="run-progress"><div id="run-bar"></div></div>
+    <div class="run-next" id="run-next"></div>
     <footer class="run-controls">
-      <button class="run-icon big" id="run-prev" aria-label="Précédent">
-        <svg viewBox="0 0 24 24"><path d="M12 6l-6 6 6 6M19 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <button class="run-side" id="run-prev" aria-label="Précédent">
+        <svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg>
       </button>
-      <button class="run-main" id="run-toggle"></button>
-      <button class="run-icon big" id="run-skip" aria-label="Suivant">
-        <svg viewBox="0 0 24 24"><path d="M12 6l6 6-6 6M5 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <button class="run-main" id="run-toggle" aria-label="Pause"></button>
+      <button class="run-side" id="run-skip" aria-label="Suivant">
+        <svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg>
       </button>
     </footer>
   </section>
 
-  <!-- Feuilles modales (éditeur, sélecteurs, confirmations) -->
   <div id="sheet-root"></div>
 
+  <script src="exercises.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

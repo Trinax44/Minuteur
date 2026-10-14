@@ -5,11 +5,12 @@ Gratuit, sans pub, fonctionne hors ligne. Les données restent sur le téléphon
 
 ## Fonctions
 
-- **Minuteur** : entraînement rapide (séries, travail, repos, « ignorer le dernier repos »), bouton marque-page pour l'enregistrer.
-- **Entraînements** : entraînements prêts à l'emploi (Abdos, Bas du corps, Haut du corps, Tabata, HIIT) et création de tes propres entraînements à plusieurs exercices.
-- **Écran de séance** : couleur selon la phase (orange préparation, vert travail, bleu repos), temps restant total, pause/reprise, précédent/suivant, bips 3-2-1, annonces vocales en français, écran maintenu allumé.
-- **Historique** : calendrier mensuel avec 💪 les jours d'entraînement, statistiques du mois, remarques sur chaque séance.
-- **Paramètres** : sons, voix, vibrations, durée de préparation, export/import des données.
+- **Minuteur** : séance express (séries, effort, récup), durée totale et frise des phases, enregistrement en séance.
+- **Bibliothèque de 50 exercices** (salle et maison) avec un mannequin animé pour chacun, filtres par muscle et matériel, consignes d'exécution.
+- **Séances** : programmes prêts à l'emploi (dont Push / Pull / Jambes en salle) et création de séances en choisissant ses exercices.
+- **Écran de séance** : anneau de progression coloré (orange préparation, vert effort, bleu récup), animation de l'exercice en cours, bips 3-2-1, annonces vocales, écran maintenu allumé.
+- **Suivi** : calendrier, jours d'affilée, statistiques du mois, notes sur chaque séance.
+- **Réglages** : sons, voix, vibrations, préparation, export/import des données.
 
 ## Installer sur l'iPhone
 
