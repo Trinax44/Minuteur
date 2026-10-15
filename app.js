@@ -18,7 +18,7 @@ const store = {
   },
 };
 
-const DEFAULT_SETTINGS = { sound: true, voice: true, vibrate: true, prep: 10, wakeLock: true, countdown: 3 };
+const DEFAULT_SETTINGS = { sound: true, voice: true, vibrate: true, prep: 10, wakeLock: true, countdown: 3, notify: true };
 const LIB = EXLIB.LIB;
 const EX = EXLIB.BY_ID;
 // Anciens identifiants (version avec mannequins) → exercices de la bibliothèque photo
@@ -351,6 +351,7 @@ function renderSettings() {
     ${sw('voice', 'Annonces vocales', 'Nom des exercices, « Effort », « Récup »…')}
     ${sw('vibrate', 'Vibrations', 'Si l’appareil le permet')}
     ${sw('wakeLock', 'Garder l’écran allumé', 'Pendant une séance')}
+    ${sw('notify', 'Notifications', '« Travaille » ou « Pause » avec la durée, à chaque changement')}
   </div>
   <div class="tiles" style="grid-template-columns:1fr">${tileHTML('Préparation avant la séance', 'prep', fmt(s.prep), 's.prep')}</div>
   <div class="list"><button class="item" id="test-sound">Tester le son et la voix <span class="chev">${ICON.right}</span></button></div>
@@ -466,7 +467,10 @@ $('#view').addEventListener('click', (e) => {
 $('#view').addEventListener('change', (e) => {
   const t = e.target;
   if (t.id === 'q-skip') { state.quick.skipLastRest = t.checked; save('quick'); render(); }
-  if (t.dataset.setting) { state.settings[t.dataset.setting] = t.checked; save('settings'); }
+  if (t.dataset.setting) {
+    state.settings[t.dataset.setting] = t.checked; save('settings');
+    if (t.dataset.setting === 'notify' && t.checked) askNotifyPermission();
+  }
   if (t.dataset.note) {
     const h = state.history.find((x) => x.id === t.dataset.note);
     if (h) { h.note = t.value.trim(); save('history'); }
@@ -917,6 +921,7 @@ const run = {
 function startWorkout(w) {
   if (!w) return;
   audio.unlock();
+  if (state.settings.notify && window.Notification && Notification.permission === 'default') Notification.requestPermission().catch(() => {});
   const segs = buildSegments(w, true);
   if (!segs.length) return toast('Séance vide');
   Object.assign(run, {
@@ -955,7 +960,45 @@ function nextInfo() {
   return `Ensuite : <b>Récup</b> · ${fmt(n.duration)}`;
 }
 
+// ---------- Notifications ----------
+// Pop-up « Minuteur » : « Travaille · 00:45 » ou « Pause · 01:15 » (durée de la phase, fixe).
+function askNotifyPermission() {
+  if (!('Notification' in window)) {
+    toast('Pop-up dans l’app activés. Pour les notifications iPhone, ajoute l’app à l’écran d’accueil.');
+    return;
+  }
+  if (Notification.permission === 'default') {
+    Notification.requestPermission().then((p) => {
+      if (p === 'denied') toast('Notifications refusées : seuls les pop-up dans l’app s’afficheront.');
+    });
+  }
+}
+
+function notify(seg) {
+  if (!state.settings.notify || seg.type === 'prep') return;
+  const body = `${seg.type === 'work' ? 'Travaille' : 'Pause'} · ${fmt(seg.duration)}`;
+  // App au premier plan : pop-up dans l’app. En arrière-plan : notification du téléphone.
+  if (!document.hidden) return popup('Minuteur', body, seg.type);
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const opts = { body, tag: 'minuteur', renotify: true, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png' };
+  const reg = navigator.serviceWorker && navigator.serviceWorker.ready;
+  (reg ? reg.then((r) => r.showNotification('Minuteur', opts)) : Promise.reject())
+    .catch(() => { try { new Notification('Minuteur', opts); } catch (e) { /* non pris en charge */ } });
+}
+
+function popup(title, body, type) {
+  document.querySelectorAll('.notif').forEach((n) => n.remove());
+  const el = document.createElement('div');
+  el.className = `notif ${type}`;
+  el.innerHTML = `<img src="icons/icon-192.png" alt=""><div><b>${esc(title)}</b><span>${esc(body)}</span></div>`;
+  el.onclick = () => el.remove();
+  document.body.appendChild(el);
+  setTimeout(() => el.classList.add('out'), 2600);
+  setTimeout(() => el.remove(), 3000);
+}
+
 function announceSegment(seg) {
+  notify(seg);
   vibrate(seg.type === 'work' ? [200, 80, 200] : 300);
   audio.beep(seg.type === 'work' ? 1320 : 660, 0.45, 0.7);
   if (seg.type === 'prep') speak(seg.name ? `Préparez-vous. ${seg.name}` : 'Préparez-vous');
