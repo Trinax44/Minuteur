@@ -16,8 +16,9 @@ const MANQ = (() => {
   const add = (p, a, len) => { const d = dir(a); return [p[0] + d[0] * len, p[1] + d[1] * len]; };
 
   const C = {
-    near: '#ead2ab', far: '#a98a63', joint: '#8c6c48', jointFar: '#6e5437',
-    prop: '#3a4252', propLight: '#59637a', metal: '#aab3c2', plate: '#1d2129', rim: '#5d6779',
+    skin: '#e2b38e', skinFar: '#b8896a', hair: '#3a2a22',
+    shirt: '#6f8fb0', shirtFar: '#55708d', shorts: '#353b47', shortsFar: '#2a2f39', shoe: '#eef0f3', shoeFar: '#b9bec7',
+    prop: '#3b4250', propLight: '#565e6e', metal: '#a7afbd', plate: '#23272f', rim: '#5a6271',
   };
 
   // ---------- Bibliothèque ----------
@@ -369,7 +370,7 @@ const MANQ = (() => {
     };
 
     // Décor fixe (derrière)
-    D.push(['line', 6, GROUND + 1.5, 194, GROUND + 1.5, 2, 'rgba(255,255,255,.12)']);
+    D.push(['line', 6, GROUND + 1.5, 194, GROUND + 1.5, 2, 'rgba(255,255,255,.10)']);
     for (const pr of props) {
       if (pr.t === 'bench') {
         line([pr.x1 + 10, pr.y + 6], [pr.x1 + 10, GROUND], 4, C.propLight);
@@ -392,59 +393,120 @@ const MANQ = (() => {
         const c = [P.hip[0] + 4, P.hip[1] - 14];
         const pt = [c[0] + 34 * Math.sin(th), c[1] + 96 * Math.cos(th)];
         const w = P.wr;
-        path(`M${w[0]},${w[1]} Q${2 * pt[0] - w[0]},${2 * pt[1] - w[1]} ${w[0] + 0.1},${w[1]}`, 2, '#ff8a5c');
+        path(`M${w[0]},${w[1]} Q${2 * pt[0] - w[0]},${2 * pt[1] - w[1]} ${w[0] + 0.1},${w[1]}`, 2, '#d98b6a');
       }
     }
 
     const has = (t) => props.find((p) => p.t === t);
     const dbs = has('dbs');
 
+    // ---- Formes du corps ----
+    const shape = (d, fill) => D.push(['shape', d, fill]);
+    const r1 = (n) => n.toFixed(1);
+    // segment arrondi et effilé (membre) de p à q
+    const capsule = (p, q, ra, rb, fill) => {
+      let dx = q[0] - p[0], dy = q[1] - p[1];
+      const len = Math.hypot(dx, dy) || 0.001; dx /= len; dy /= len;
+      const nx = -dy, ny = dx;
+      shape(`M${r1(p[0] + nx * ra)},${r1(p[1] + ny * ra)}L${r1(q[0] + nx * rb)},${r1(q[1] + ny * rb)}` +
+        `A${rb},${rb} 0 0 0 ${r1(q[0] - nx * rb)},${r1(q[1] - ny * rb)}L${r1(p[0] - nx * ra)},${r1(p[1] - ny * ra)}` +
+        `A${ra},${ra} 0 0 0 ${r1(p[0] + nx * ra)},${r1(p[1] + ny * ra)}Z`, fill);
+    };
+    const lerpP = (p, q, f) => [p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f];
+    // contour fermé lissé passant près des points
+    const smooth = (pts, fill) => {
+      const m = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+      const n = pts.length;
+      let d = `M${r1(m(pts[n - 1], pts[0])[0])},${r1(m(pts[n - 1], pts[0])[1])}`;
+      for (let i = 0; i < n; i++) {
+        const c = pts[i], e = m(pts[i], pts[(i + 1) % n]);
+        d += `Q${r1(c[0])},${r1(c[1])} ${r1(e[0])},${r1(e[1])}`;
+      }
+      shape(d + 'Z', fill);
+    };
+    const unit = (p, q) => { const dx = q[0] - p[0], dy = q[1] - p[1], l = Math.hypot(dx, dy) || 1; return [dx / l, dy / l]; };
+
+    // jambe : cuisse, short, tibia, chaussure
+    const leg = (hip, kn, an, to, far) => {
+      const skin = far ? C.skinFar : C.skin;
+      capsule(hip, kn, 6.6, 5, skin);
+      capsule(kn, an, 5, 3.3, skin);
+      capsule(hip, lerpP(hip, kn, 0.55), 7.4, 6.4, far ? C.shortsFar : C.shorts);
+      const f = unit(an, to);
+      capsule([an[0] - f[0] * 3, an[1] - f[1] * 3], [to[0] + f[0] * 1.5, to[1] + f[1] * 1.5], 3.9, 3, far ? C.shoeFar : C.shoe);
+    };
+    // bras : bras, manche, avant-bras, main
+    const arm = (sh, el, wr, far) => {
+      const skin = far ? C.skinFar : C.skin;
+      capsule(sh, el, 4.8, 3.8, skin);
+      capsule(el, wr, 3.8, 2.9, skin);
+      const f = unit(el, wr);
+      capsule(wr, [wr[0] + f[0] * 4.5, wr[1] + f[1] * 4.5], 3.3, 2.6, skin);
+      capsule(sh, lerpP(sh, el, 0.45), 5.8, 5.2, far ? C.shirtFar : C.shirt);
+    };
+    // tête avec cheveux, oreille et nez (orientée selon le cou)
+    const head = (c, u, n, front) => {
+      if (front) {
+        circ([c[0], c[1] - 1.6], 9.4, C.hair);
+        circ([c[0] - 8.4, c[1] + 1.2], 2.2, C.skinFar); circ([c[0] + 8.4, c[1] + 1.2], 2.2, C.skinFar);
+        D.push(['ellipse', c[0], c[1] + 1, 8.3, 9.4, C.skin, null]);
+        D.push(['ellipse', c[0], c[1] - 5.5, 8.4, 4.2, C.hair, null]);
+        return;
+      }
+      circ([c[0] - n[0] * 1.6 + u[0] * 1.2, c[1] - n[1] * 1.6 + u[1] * 1.2], 9.3, C.hair);
+      circ([c[0] + n[0] * 1.1 - u[0] * 0.6, c[1] + n[1] * 1.1 - u[1] * 0.6], 8.4, C.skin);
+      circ([c[0] + n[0] * 8.6 - u[0] * 0.5, c[1] + n[1] * 8.6 - u[1] * 0.5], 1.7, C.skin);
+      circ([c[0] - n[0] * 1.5 - u[0] * 0.5, c[1] - n[1] * 1.5 - u[1] * 0.5], 1.9, C.skinFar);
+    };
+
     if (ex.view === 'front') {
-      const col = C.near, j = C.joint;
-      const limb = (a, b, c, w1, w2) => { line(a, b, w1, col); line(b, c, w2, col); circ(b, w2 / 2 - 0.5, j); };
-      limb(P.hipL, P.knL, P.anL, 11, 9); line(P.anL, P.toL, 6, col);
-      limb(P.hipR, P.knR, P.anR, 11, 9); line(P.anR, P.toR, 6, col);
-      poly([P.shL, P.shR, [P.hipR[0] + 3, P.hipR[1]], [P.hipL[0] - 3, P.hipL[1]]], 12, col);
-      D.push(['polyfill', [P.shL, P.shR, [P.hipR[0] + 3, P.hipR[1]], [P.hipL[0] - 3, P.hipL[1]]].map((p) => p.join(',')).join(' '), col]);
-      line([P.sh[0], P.sh[1]], [P.head[0], P.head[1] + 6], 7, col);
-      D.push(['ellipse', P.head[0], P.head[1], 8.5, 10, col]);
-      limb(P.shL, P.elL, P.wrL, 8, 7); circ(P.wrL, 3.5, j);
-      limb(P.shR, P.elR, P.wrR, 8, 7); circ(P.wrR, 3.5, j);
+      leg(P.hipL, P.knL, P.anL, P.toL, false);
+      leg(P.hipR, P.knR, P.anR, P.toR, false);
+      // bassin (short) puis buste (t-shirt)
+      smooth([[P.hipL[0] - 6, P.hipL[1] - 6], [P.hipR[0] + 6, P.hipR[1] - 6], [P.hipR[0] + 7, P.hipR[1] + 6], [P.hip[0], P.hip[1] + 4], [P.hipL[0] - 7, P.hipL[1] + 6]], C.shorts);
+      smooth([[P.shL[0] - 3, P.shL[1] - 3], [P.sh[0], P.sh[1] - 4], [P.shR[0] + 3, P.shR[1] - 3], [P.shR[0] + 1, P.sh[1] + 20], [P.hipR[0] + 4, P.hip[1] - 5], [P.hipL[0] - 4, P.hip[1] - 5], [P.shL[0] - 1, P.sh[1] + 20]], C.shirt);
+      capsule(P.sh, [P.sh[0], P.sh[1] - 9], 3.6, 3.4, C.skin);
+      head(P.head, [0, -1], [1, 0], true);
+      arm(P.shL, P.elL, P.wrL, false);
+      arm(P.shR, P.elR, P.wrR, false);
       if (dbs) { dumb(P.wrL, true); dumb(P.wrR, true); }
       return D;
     }
 
     // Profil : côté éloigné d'abord
-    line(P.hip, P.kn2, 11, C.far); line(P.kn2, P.an2, 9, C.far); line(P.an2, P.to2, 6, C.far); circ(P.kn2, 4, C.jointFar);
-    line(P.sh, P.el2, 8, C.far); line(P.el2, P.wr2, 7, C.far); circ(P.el2, 3.2, C.jointFar); circ(P.wr2, 3.4, C.far);
+    leg(P.hip, P.kn2, P.an2, P.to2, true);
+    arm(P.sh, P.el2, P.wr2, true);
     if (dbs) dumb(P.wr2, dbs.vertical);
 
-    // Torse, cou, tête
-    line(P.hip, P.sh, 19, C.near);
-    circ(P.hip, 9.5, C.near);
-    line(P.sh, P.neck, 7, C.near);
-    D.push(['ellipse', P.head[0], P.head[1], 8.5, 10, C.near, angleOf(P.sh, P.head)]);
+    // Buste : axe hanche → épaule, « n » = côté ventre
+    const u = unit(P.hip, P.sh);
+    const nrm = [-u[1], u[0]];
+    const L0 = Math.hypot(P.sh[0] - P.hip[0], P.sh[1] - P.hip[1]);
+    const at = (s, o) => [P.hip[0] + u[0] * L0 * s + nrm[0] * o, P.hip[1] + u[1] * L0 * s + nrm[1] * o];
+    smooth([at(0.34, 9.2), at(0.06, 8.6), at(-0.15, 4), at(-0.15, -5.5), at(0.02, -11.6), at(0.34, -9.8)], C.shorts);
+    smooth([at(0.22, 9.4), at(0.47, 10), at(0.72, 12.6), at(0.93, 10), at(1.04, 5), at(1.04, -6.4), at(0.86, -10), at(0.55, -9), at(0.22, -10)], C.shirt);
+
+    // Cou et tête
+    const v = unit(P.sh, P.head);
+    capsule(P.sh, P.neck, 3.8, 3.5, C.skin);
+    head(P.head, v, [-v[1], v[0]], false);
 
     // Câble (derrière la main proche)
     const cab = has('cable');
     if (cab) { line(cab.from, P.wr, 1.6, C.metal); circ(cab.from, 4, C.prop, C.metal, 1.5); }
 
-    // Jambe proche
-    line(P.hip, P.kn, 12, C.near); line(P.kn, P.an, 10, C.near); line(P.an, P.to, 7, C.near);
-    circ(P.kn, 4.5, C.joint); circ(P.an, 2.6, C.joint);
+    leg(P.hip, P.kn, P.an, P.to, false);
 
     // Accessoires liés aux articulations
     for (const pr of props) {
       if (pr.t === 'roller') circ([P.an[0] + (pr.dx || 0), P.an[1] + (pr.dy || 0)], 7, C.prop, C.propLight, 2);
       if (pr.t === 'sled') {
-        const c = add(P.an, 135, 5); const p1 = add(c, 45, 20), p2 = add(c, 225, 20);
+        const c = add(P.an, 135, 6); const p1 = add(c, 45, 20), p2 = add(c, 225, 20);
         line(p1, p2, 7, C.prop);
       }
     }
 
-    // Bras proche
-    line(P.sh, P.el, 9, C.near); line(P.el, P.wr, 8, C.near);
-    circ(P.sh, 5, C.joint); circ(P.el, 3.8, C.joint); circ(P.wr, 4, C.near);
+    arm(P.sh, P.el, P.wr, false);
 
     for (const pr of props) {
       if (pr.t === 'plate') {
@@ -473,7 +535,7 @@ const MANQ = (() => {
     if (!pool || svg._sig !== sig) {
       while (svg.lastChild) svg.removeChild(svg.lastChild);
       pool = D.map((d) => {
-        const tag = { line: 'line', circle: 'circle', poly: 'polyline', polyfill: 'polygon', path: 'path', ellipse: 'ellipse' }[d[0]];
+        const tag = { line: 'line', circle: 'circle', poly: 'polyline', polyfill: 'polygon', path: 'path', ellipse: 'ellipse', shape: 'path' }[d[0]];
         const el = document.createElementNS(NS, tag);
         if (tag === 'line' || tag === 'polyline' || tag === 'path') { el.setAttribute('stroke-linecap', 'round'); el.setAttribute('stroke-linejoin', 'round'); el.setAttribute('fill', 'none'); }
         svg.appendChild(el);
@@ -497,6 +559,8 @@ const MANQ = (() => {
           el.setAttribute('points', d[1]); el.setAttribute('fill', d[2]); break;
         case 'path':
           el.setAttribute('d', d[1]); el.setAttribute('stroke-width', d[2]); el.setAttribute('stroke', d[3]); break;
+        case 'shape':
+          el.setAttribute('d', d[1]); el.setAttribute('fill', d[2]); break;
         case 'ellipse':
           el.setAttribute('cx', f(d[1])); el.setAttribute('cy', f(d[2])); el.setAttribute('rx', d[3]); el.setAttribute('ry', d[4]); el.setAttribute('fill', d[5]);
           if (d[6] != null) el.setAttribute('transform', `rotate(${f(-d[6] + 180)} ${f(d[1])} ${f(d[2])})`);

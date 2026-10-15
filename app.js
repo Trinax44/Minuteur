@@ -93,21 +93,21 @@ const ICON = {
 // ---------- Programmes prêts à l'emploi ----------
 const ex = (exId, sets, work, rest) => ({ exId, name: EX[exId].name, sets, work, rest });
 const PRESETS = [
-  { id: 'p-abdos', name: 'Abdos', level: 'Débutant', bg: 'linear-gradient(160deg,#4b3fb3,#1d1747)', restBetween: 30, skipLastRest: true,
+  { id: 'p-abdos', name: 'Abdos', level: 'Débutant', bg: 'linear-gradient(160deg,#3d3a52,#23222c)', restBetween: 30, skipLastRest: true,
     exercises: [ex('crunch', 3, 30, 15), ex('planche', 3, 30, 15), ex('releves_jambes', 3, 30, 15), ex('mountain', 3, 30, 15)] },
-  { id: 'p-jambes', name: 'Bas du corps', level: 'Débutant', bg: 'linear-gradient(160deg,#1f6fb8,#0f2440)', restBetween: 45, skipLastRest: true,
+  { id: 'p-jambes', name: 'Bas du corps', level: 'Débutant', bg: 'linear-gradient(160deg,#34475a,#1f262e)', restBetween: 45, skipLastRest: true,
     exercises: [ex('squat', 3, 40, 20), ex('fentes', 3, 40, 20), ex('pont_fessier', 3, 40, 20), ex('squat_saute', 3, 30, 20)] },
-  { id: 'p-haut', name: 'Haut du corps', level: 'Moyen', bg: 'linear-gradient(160deg,#b8571f,#40180a)', restBetween: 45, skipLastRest: true,
+  { id: 'p-haut', name: 'Haut du corps', level: 'Moyen', bg: 'linear-gradient(160deg,#55443a,#2a2420)', restBetween: 45, skipLastRest: true,
     exercises: [ex('pompes', 3, 40, 20), ex('dips_banc', 3, 40, 20), ex('superman', 3, 30, 20), ex('planche', 3, 40, 20)] },
-  { id: 'p-push', name: 'Push salle', level: 'Salle', bg: 'linear-gradient(160deg,#7c2d4f,#2a0f1d)', restBetween: 90, skipLastRest: true,
+  { id: 'p-push', name: 'Push salle', level: 'Salle', bg: 'linear-gradient(160deg,#523a45,#2a2126)', restBetween: 90, skipLastRest: true,
     exercises: [ex('dc', 4, 45, 90), ex('dc_incline', 3, 45, 75), ex('militaire', 3, 45, 75), ex('triceps_poulie', 3, 40, 60)] },
-  { id: 'p-pull', name: 'Pull salle', level: 'Salle', bg: 'linear-gradient(160deg,#2f7c5a,#0d2a1e)', restBetween: 90, skipLastRest: true,
+  { id: 'p-pull', name: 'Pull salle', level: 'Salle', bg: 'linear-gradient(160deg,#3a5047,#202a26)', restBetween: 90, skipLastRest: true,
     exercises: [ex('tractions', 4, 40, 90), ex('tirage_vertical', 3, 45, 75), ex('rowing_barre', 3, 45, 75), ex('curl_halteres', 3, 40, 60)] },
-  { id: 'p-legs', name: 'Jambes salle', level: 'Salle', bg: 'linear-gradient(160deg,#7a6a1f,#2a240a)', restBetween: 90, skipLastRest: true,
+  { id: 'p-legs', name: 'Jambes salle', level: 'Salle', bg: 'linear-gradient(160deg,#504a36,#29271f)', restBetween: 90, skipLastRest: true,
     exercises: [ex('squat_barre', 4, 45, 120), ex('presse', 3, 45, 90), ex('leg_curl', 3, 40, 60), ex('mollets', 3, 40, 45)] },
-  { id: 'p-tabata', name: 'Tabata', level: 'Intense', bg: 'linear-gradient(160deg,#b31f3b,#3d0a14)', restBetween: 0, skipLastRest: true,
+  { id: 'p-tabata', name: 'Tabata', level: 'Intense', bg: 'linear-gradient(160deg,#573a3c,#2b2021)', restBetween: 0, skipLastRest: true,
     exercises: [ex('burpees', 8, 20, 10)] },
-  { id: 'p-hiit', name: 'HIIT cardio', level: 'Moyen', bg: 'linear-gradient(160deg,#1f9c8a,#0a302a)', restBetween: 30, skipLastRest: true,
+  { id: 'p-hiit', name: 'HIIT cardio', level: 'Moyen', bg: 'linear-gradient(160deg,#36504f,#1f2a2a)', restBetween: 30, skipLastRest: true,
     exercises: [ex('jumping_jacks', 3, 45, 15), ex('burpees', 3, 45, 15), ex('genoux_hauts', 3, 45, 15), ex('corde', 3, 45, 15)] },
 ];
 
