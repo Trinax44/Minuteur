@@ -650,7 +650,7 @@ function openDetail(x, { onAdd, onCreate } = {}) {
       <div class="detail-anim" data-manq="${x.id}"></div>
       <h3>${esc(x.name)}</h3>
       <div class="chips"><span class="chip lime">${esc(groupName)}</span><span class="chip">${esc(equipName)}</span></div>
-      <div class="muscles">Muscles : ${esc(x.muscles)}</div>
+      <div class="muscles"><span style="color:#d9564e">●</span> En rouge, les muscles travaillés : ${esc(x.muscles)}</div>
       <ol class="cues">${x.cues.map((c) => `<li>${esc(c)}</li>`).join('')}</ol>
       ${onAdd ? `<button class="btn" data-add>${ICON.plus}Ajouter à ma séance</button>` : ''}
       ${onCreate ? `<button class="btn" data-create>${ICON.plus}Créer une séance avec</button>` : ''}

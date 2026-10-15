@@ -1,6 +1,6 @@
 // Service worker : l'application fonctionne hors ligne.
 // Réseau d'abord (pour recevoir les mises à jour), cache en secours.
-const CACHE = 'minuteur-v3';
+const CACHE = 'minuteur-v4';
 const FILES = ['./', 'index.html', 'style.css', 'app.js', 'exercises.js', 'manifest.webmanifest',
   'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png'];
 
