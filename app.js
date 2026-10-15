@@ -19,8 +19,23 @@ const store = {
 };
 
 const DEFAULT_SETTINGS = { sound: true, voice: true, vibrate: true, prep: 10, wakeLock: true, countdown: 3 };
-const LIB = MANQ.LIB;
-const EX = MANQ.BY_ID;
+const LIB = EXLIB.LIB;
+const EX = EXLIB.BY_ID;
+// Anciens identifiants (version avec mannequins) → exercices de la bibliothèque photo
+const OLD_IDS = {
+  dc: 'Barbell_Bench_Press_-_Medium_Grip', dc_halteres: 'Dumbbell_Bench_Press', dc_incline: 'Incline_Dumbbell_Press', pompes: 'Pushups',
+  dips: 'Dips_-_Chest_Version', pompes_inclinees: 'Decline_Push-Up', tractions: 'Pullups', tirage_vertical: 'Wide-Grip_Lat_Pulldown',
+  tirage_horizontal: 'Seated_Cable_Rows', rowing_barre: 'Bent_Over_Barbell_Row', rowing_haltere: 'One-Arm_Dumbbell_Row', sdt: 'Barbell_Deadlift',
+  superman: 'Superman', militaire: 'Dumbbell_Shoulder_Press', elev_laterales: 'Side_Lateral_Raise', elev_frontales: 'Front_Dumbbell_Raise',
+  oiseau: 'Reverse_Flyes', curl_halteres: 'Dumbbell_Bicep_Curl', curl_barre: 'Barbell_Curl', curl_marteau: 'Hammer_Curls',
+  triceps_poulie: 'Triceps_Pushdown', triceps_nuque: 'Standing_Dumbbell_Triceps_Extension', barre_front: 'Lying_Triceps_Press',
+  dips_banc: 'Bench_Dips', squat: 'Bodyweight_Squat', squat_barre: 'Barbell_Squat', goblet: 'Goblet_Squat', fentes: 'Bodyweight_Walking_Lunge',
+  fentes_halteres: 'Dumbbell_Lunges', presse: 'Leg_Press', leg_extension: 'Leg_Extensions', leg_curl: 'Lying_Leg_Curls',
+  sdt_roumain: 'Romanian_Deadlift', mollets: 'Standing_Calf_Raises', squat_saute: 'Freehand_Jump_Squat', hip_thrust: 'Barbell_Hip_Thrust',
+  pont_fessier: 'Butt_Lift_Bridge', kb_swing: 'One-Arm_Kettlebell_Swings', crunch: 'Crunches', planche: 'Plank',
+  releves_jambes: 'Flat_Bench_Lying_Leg_Raise', releves_genoux: 'Hanging_Leg_Raise', roue: 'Ab_Roller', mountain: 'Mountain_Climbers',
+  jumping_jacks: 'Star_Jump', genoux_hauts: 'Fast_Skipping', talons_fesses: 'Double_Leg_Butt_Kick', corde: 'Rope_Jumping', rameur: 'Rowing_Stationary',
+};
 
 const state = {
   tab: 'timer',
@@ -34,6 +49,7 @@ const state = {
 
 // Anciennes séances : on retrouve l'exercice de la bibliothèque par son nom
 state.workouts.forEach((w) => w.exercises.forEach((e) => {
+  if (e.exId && !EX[e.exId]) e.exId = OLD_IDS[e.exId];
   if (!e.exId) {
     const m = LIB.find((x) => x.name.toLowerCase() === String(e.name || '').toLowerCase());
     if (m) e.exId = m.id;
@@ -94,21 +110,21 @@ const ICON = {
 const ex = (exId, sets, work, rest) => ({ exId, name: EX[exId].name, sets, work, rest });
 const PRESETS = [
   { id: 'p-abdos', name: 'Abdos', level: 'Débutant', bg: 'linear-gradient(160deg,#3d3a52,#23222c)', restBetween: 30, skipLastRest: true,
-    exercises: [ex('crunch', 3, 30, 15), ex('planche', 3, 30, 15), ex('releves_jambes', 3, 30, 15), ex('mountain', 3, 30, 15)] },
+    exercises: [ex('Crunches', 3, 30, 15), ex('Plank', 3, 30, 15), ex('Flat_Bench_Lying_Leg_Raise', 3, 30, 15), ex('Mountain_Climbers', 3, 30, 15)] },
   { id: 'p-jambes', name: 'Bas du corps', level: 'Débutant', bg: 'linear-gradient(160deg,#34475a,#1f262e)', restBetween: 45, skipLastRest: true,
-    exercises: [ex('squat', 3, 40, 20), ex('fentes', 3, 40, 20), ex('pont_fessier', 3, 40, 20), ex('squat_saute', 3, 30, 20)] },
+    exercises: [ex('Bodyweight_Squat', 3, 40, 20), ex('Bodyweight_Walking_Lunge', 3, 40, 20), ex('Butt_Lift_Bridge', 3, 40, 20), ex('Freehand_Jump_Squat', 3, 30, 20)] },
   { id: 'p-haut', name: 'Haut du corps', level: 'Moyen', bg: 'linear-gradient(160deg,#55443a,#2a2420)', restBetween: 45, skipLastRest: true,
-    exercises: [ex('pompes', 3, 40, 20), ex('dips_banc', 3, 40, 20), ex('superman', 3, 30, 20), ex('planche', 3, 40, 20)] },
+    exercises: [ex('Pushups', 3, 40, 20), ex('Bench_Dips', 3, 40, 20), ex('Superman', 3, 30, 20), ex('Plank', 3, 40, 20)] },
   { id: 'p-push', name: 'Push salle', level: 'Salle', bg: 'linear-gradient(160deg,#523a45,#2a2126)', restBetween: 90, skipLastRest: true,
-    exercises: [ex('dc', 4, 45, 90), ex('dc_incline', 3, 45, 75), ex('militaire', 3, 45, 75), ex('triceps_poulie', 3, 40, 60)] },
+    exercises: [ex('Barbell_Bench_Press_-_Medium_Grip', 4, 45, 90), ex('Incline_Dumbbell_Press', 3, 45, 75), ex('Dumbbell_Shoulder_Press', 3, 45, 75), ex('Triceps_Pushdown', 3, 40, 60)] },
   { id: 'p-pull', name: 'Pull salle', level: 'Salle', bg: 'linear-gradient(160deg,#3a5047,#202a26)', restBetween: 90, skipLastRest: true,
-    exercises: [ex('tractions', 4, 40, 90), ex('tirage_vertical', 3, 45, 75), ex('rowing_barre', 3, 45, 75), ex('curl_halteres', 3, 40, 60)] },
+    exercises: [ex('Pullups', 4, 40, 90), ex('Wide-Grip_Lat_Pulldown', 3, 45, 75), ex('Bent_Over_Barbell_Row', 3, 45, 75), ex('Dumbbell_Bicep_Curl', 3, 40, 60)] },
   { id: 'p-legs', name: 'Jambes salle', level: 'Salle', bg: 'linear-gradient(160deg,#504a36,#29271f)', restBetween: 90, skipLastRest: true,
-    exercises: [ex('squat_barre', 4, 45, 120), ex('presse', 3, 45, 90), ex('leg_curl', 3, 40, 60), ex('mollets', 3, 40, 45)] },
+    exercises: [ex('Barbell_Squat', 4, 45, 120), ex('Leg_Press', 3, 45, 90), ex('Lying_Leg_Curls', 3, 40, 60), ex('Standing_Calf_Raises', 3, 40, 45)] },
   { id: 'p-tabata', name: 'Tabata', level: 'Intense', bg: 'linear-gradient(160deg,#573a3c,#2b2021)', restBetween: 0, skipLastRest: true,
-    exercises: [ex('burpees', 8, 20, 10)] },
+    exercises: [ex('Freehand_Jump_Squat', 8, 20, 10)] },
   { id: 'p-hiit', name: 'HIIT cardio', level: 'Moyen', bg: 'linear-gradient(160deg,#36504f,#1f2a2a)', restBetween: 30, skipLastRest: true,
-    exercises: [ex('jumping_jacks', 3, 45, 15), ex('burpees', 3, 45, 15), ex('genoux_hauts', 3, 45, 15), ex('corde', 3, 45, 15)] },
+    exercises: [ex('Star_Jump', 3, 45, 15), ex('Mountain_Climbers', 3, 45, 15), ex('Fast_Skipping', 3, 45, 15), ex('Rope_Jumping', 3, 45, 15)] },
 ];
 
 function quickAsWorkout() {
@@ -159,7 +175,7 @@ function render() {
   if (state.tab === 'workouts') view.innerHTML = renderWorkouts();
   if (state.tab === 'history') view.innerHTML = renderHistory();
   if (state.tab === 'settings') view.innerHTML = renderSettings();
-  MANQ.hydrate(view);
+  EXLIB.hydrate(view);
 }
 
 function tileHTML(label, dotCls, value, key) {
@@ -207,8 +223,8 @@ function renderTimer() {
     </label>
   </div>
   <button class="promo" id="open-builder">
-    ${manq('kb_swing', 'thumb')}
-    <div><b>Composer une séance</b><span>Choisis tes exercices parmi ${LIB.length} animations</span></div>
+    ${manq('Goblet_Squat', 'thumb')}
+    <div><b>Composer une séance</b><span>Choisis parmi ${LIB.length} exercices en photos</span></div>
     <span class="chev">${ICON.right}</span>
   </button>
   <button class="start" id="launch-quick">${ICON.play.replace('<svg', '<svg style="width:22px;height:22px"')}Démarrer<span class="total">${ICON.clock}${fmt(total)}</span></button>`;
@@ -231,8 +247,8 @@ function renderWorkouts() {
   </div>
   <div class="section"><h2>Exercices</h2></div>
   <button class="lib-banner" id="open-library">
-    <div class="thumbs">${['dc', 'squat_barre', 'tractions'].map((id) => manq(id)).join('')}</div>
-    <div class="txt"><b>Bibliothèque d’exercices</b><span>${LIB.length} mouvements animés · salle et maison</span></div>
+    <div class="thumbs">${['Barbell_Bench_Press_-_Medium_Grip', 'Barbell_Squat', 'Pullups'].map((id) => manq(id)).join('')}</div>
+    <div class="txt"><b>Bibliothèque d’exercices</b><span>${LIB.length} exercices en photos, avec explications</span></div>
   </button>
   <div class="section"><h2>Mes séances</h2></div>
   ${mine.length ? `<div class="list">${mine.map((w) => `
@@ -466,7 +482,7 @@ function openSheet(html, { full = false, onMount } = {}) {
   const close = () => back.remove();
   back.addEventListener('click', (e) => { if (e.target === back) close(); });
   $('#sheet-root').appendChild(back);
-  MANQ.hydrate(back);
+  EXLIB.hydrate(back);
   if (onMount) onMount(back.firstElementChild, close);
   return close;
 }
@@ -571,30 +587,51 @@ function openWorkoutMenu(w) {
 
 // ---------- Bibliothèque d'exercices ----------
 // onPick(exercice) : mode « choisir » (depuis l'éditeur) ; sinon simple consultation
+// Les exercices les plus courants d'abord, les étirements à la fin
+const FEATURED = new Set(Object.values(OLD_IDS));
+const RANKED = LIB.slice().sort((a, b) => (FEATURED.has(b.id) - FEATURED.has(a.id)) || (a.stretch - b.stretch) || (a.equip === 'autre') - (b.equip === 'autre'));
+
 function openLibrary({ onPick } = {}) {
-  let group = 'all', equip = 'all', query = '';
-  let gridEl;
+  let group = 'all', equip = 'all', query = '', shown = 0, items = [];
+  let gridEl, moreObs;
+  const norm = (t) => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const equipName = Object.fromEntries(EXLIB.EQUIP);
+  const PAGE = 40;
 
-  const list = () => LIB.filter((x) =>
-    (group === 'all' || x.group === group) &&
-    (equip === 'all' || x.equip === equip) &&
-    (!query || (x.name + ' ' + x.muscles).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
-      .includes(query.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''))));
+  const list = () => {
+    const q = norm(query);
+    return RANKED.filter((x) =>
+      (group === 'all' || x.tags.has(group)) &&
+      (equip === 'all' || x.equip === equip) &&
+      (!q || norm(x.name + ' ' + x.nameEn + ' ' + x.muscles).includes(q)));
+  };
 
-  const equipName = Object.fromEntries(MANQ.EQUIP);
+  const card = (x) => `
+    <button class="lib-card" data-ex="${esc(x.id)}">
+      <div class="anim">${EXLIB.photo(x.id)}</div>
+      <div class="info"><b>${esc(x.name)}</b><span>${esc(equipName[x.equip])} · ${esc(x.level)}</span></div>
+    </button>`;
+
+  // Affiche les exercices par paquets pendant le défilement
+  const more = () => {
+    const grid = gridEl.querySelector('.lib-grid');
+    const next = items.slice(shown, shown + PAGE);
+    grid.insertAdjacentHTML('beforeend', next.map(card).join(''));
+    shown += next.length;
+    const s = gridEl.querySelector('.lib-more');
+    if (s) s.style.display = shown < items.length ? '' : 'none';
+  };
+
   const drawGrid = () => {
-    const items = list();
+    items = list(); shown = 0;
     gridEl.innerHTML = `
       <div class="lib-count">${items.length} exercice${items.length > 1 ? 's' : ''}</div>
       <div class="lib-grid">
-        ${onPick ? `<button class="lib-card custom" data-custom>${ICON.plus}<b>Exercice libre</b><span>Sans animation, nom au choix</span></button>` : ''}
-        ${items.map((x) => `
-          <button class="lib-card" data-ex="${x.id}">
-            <div class="anim" data-manq="${x.id}"></div>
-            <div class="info"><b>${esc(x.name)}</b><span>${esc(equipName[x.equip])}</span></div>
-          </button>`).join('')}
-      </div>`;
-    MANQ.hydrate(gridEl);
+        ${onPick ? `<button class="lib-card custom" data-custom>${ICON.plus}<b>Exercice libre</b><span>Sans photo, nom au choix</span></button>` : ''}
+      </div>
+      <button class="ghost-btn lib-more" data-more style="margin-top:12px">Afficher plus</button>`;
+    more();
+    if (moreObs) { moreObs.disconnect(); moreObs.observe(gridEl.querySelector('.lib-more')); }
   };
 
   const chips = (arr, cur, attr, alt) => `<button class="filter ${alt} ${cur === 'all' ? 'on' : ''}" ${attr}="all">Tout</button>` +
@@ -603,23 +640,28 @@ function openLibrary({ onPick } = {}) {
   openSheet(`
     <div class="sticky">
       <div class="sheet-head"><button class="txt-btn" data-close>Fermer</button><h2>${onPick ? 'Choisir un exercice' : 'Bibliothèque'}</h2><span style="min-width:76px"></span></div>
-      <div class="search">${ICON.search}<input type="search" placeholder="Rechercher (ex. squat, dos…)" data-q></div>
-      <div class="filters" data-groups>${chips(MANQ.GROUPS, group, 'data-g', '')}</div>
-      <div class="filters" data-equips>${chips(MANQ.EQUIP, equip, 'data-e', 'alt')}</div>
+      <div class="search">${ICON.search}<input type="search" placeholder="Rechercher (ex. squat, dos, curl…)" data-q></div>
+      <div class="filters" data-groups>${chips(EXLIB.GROUPS, group, 'data-g', '')}</div>
+      <div class="filters" data-equips>${chips(EXLIB.EQUIP, equip, 'data-e', 'alt')}</div>
     </div>
     <div data-grid></div>`, {
     full: true,
     onMount(el, close) {
       gridEl = el.querySelector('[data-grid]');
+      if ('IntersectionObserver' in window) {
+        moreObs = new IntersectionObserver((en) => { if (en.some((e) => e.isIntersecting) && shown < items.length) more(); }, { root: el, rootMargin: '600px' });
+      }
       drawGrid();
-      el.querySelector('[data-q]').addEventListener('input', (e) => { query = e.target.value.trim(); drawGrid(); });
+      let timer;
+      el.querySelector('[data-q]').addEventListener('input', (e) => { clearTimeout(timer); timer = setTimeout(() => { query = e.target.value.trim(); drawGrid(); }, 150); });
       el.addEventListener('click', (e) => {
         const t = e.target;
         if (t.closest('[data-close]')) return close();
+        if (t.closest('[data-more]')) return more();
         const g = t.closest('[data-g]');
-        if (g) { group = g.dataset.g; el.querySelector('[data-groups]').innerHTML = chips(MANQ.GROUPS, group, 'data-g', ''); return drawGrid(); }
+        if (g) { group = g.dataset.g; el.querySelector('[data-groups]').innerHTML = chips(EXLIB.GROUPS, group, 'data-g', ''); return drawGrid(); }
         const q = t.closest('[data-e]');
-        if (q) { equip = q.dataset.e; el.querySelector('[data-equips]').innerHTML = chips(MANQ.EQUIP, equip, 'data-e', 'alt'); return drawGrid(); }
+        if (q) { equip = q.dataset.e; el.querySelector('[data-equips]').innerHTML = chips(EXLIB.EQUIP, equip, 'data-e', 'alt'); return drawGrid(); }
         if (t.closest('[data-custom]')) {
           close();
           return onPick({ name: 'Exercice libre', sets: 3, work: 40, rest: 20 });
@@ -637,21 +679,21 @@ function openLibrary({ onPick } = {}) {
 }
 
 function defaultsFor(x) {
+  if (x.stretch) return { exId: x.id, name: x.name, sets: 2, work: 30, rest: 10 };
   const gym = x.equip !== 'pdc';
   return { exId: x.id, name: x.name, sets: gym ? 4 : 3, work: gym ? 45 : 40, rest: gym ? 75 : 20 };
 }
 
 function openDetail(x, { onAdd, onCreate } = {}) {
   if (!x) return;
-  const groupName = Object.fromEntries(MANQ.GROUPS)[x.group];
-  const equipName = Object.fromEntries(MANQ.EQUIP)[x.equip];
+  const equipName = Object.fromEntries(EXLIB.EQUIP)[x.equip];
   openSheet(`
     <div class="detail">
-      <div class="detail-anim" data-manq="${x.id}"></div>
+      <div class="detail-anim">${EXLIB.photo(x.id)}</div>
       <h3>${esc(x.name)}</h3>
-      <div class="chips"><span class="chip lime">${esc(groupName)}</span><span class="chip">${esc(equipName)}</span></div>
-      <div class="muscles"><span style="color:#d9564e">●</span> En rouge, les muscles travaillés : ${esc(x.muscles)}</div>
-      <ol class="cues">${x.cues.map((c) => `<li>${esc(c)}</li>`).join('')}</ol>
+      <div class="chips"><span class="chip lime">${esc(x.category)}</span><span class="chip">${esc(equipName)}</span><span class="chip">${esc(x.level)}</span></div>
+      <div class="muscles"><b>Muscles travaillés :</b> ${esc(x.muscles)}${x.secondary ? `<br><span>Secondaires : ${esc(x.secondary)}</span>` : ''}</div>
+      ${x.cues.length ? `<ol class="cues">${x.cues.map((c) => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}
       ${onAdd ? `<button class="btn" data-add>${ICON.plus}Ajouter à ma séance</button>` : ''}
       ${onCreate ? `<button class="btn" data-create>${ICON.plus}Créer une séance avec</button>` : ''}
       <button class="btn secondary" data-close>Fermer</button>
@@ -719,7 +761,7 @@ function openEditor(original, isNew) {
       <p class="hint">Durée totale : <b>${fmt(total)}</b>${state.settings.prep ? ` (+ ${fmt(state.settings.prep)} de préparation)` : ''}</p>
       <button class="btn" data-go>${ICON.play}Enregistrer et lancer</button>
       ${!isNew ? '<button class="btn danger" data-delete>Supprimer la séance</button>' : ''}`;
-    MANQ.hydrate(sheetEl);
+    EXLIB.hydrate(sheetEl);
     sheetEl.scrollTop = y;
   };
 
@@ -973,7 +1015,7 @@ function drawRun() {
     run.animId = animId;
     const host = $('#run-anim');
     host.innerHTML = '';
-    if (animId) MANQ.mount(host, animId);
+    if (animId) EXLIB.mount(host, animId);
   }
   const label = seg.between || seg.type === 'prep' ? (seg.name ? `À suivre : ${seg.name}` : '') : seg.name || '';
   if ($('#run-name').textContent !== label) $('#run-name').textContent = label;

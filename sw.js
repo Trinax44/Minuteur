@@ -1,7 +1,7 @@
 // Service worker : l'application fonctionne hors ligne.
 // Réseau d'abord (pour recevoir les mises à jour), cache en secours.
-const CACHE = 'minuteur-v4';
-const FILES = ['./', 'index.html', 'style.css', 'app.js', 'exercises.js', 'manifest.webmanifest',
+const CACHE = 'minuteur-v5';
+const FILES = ['./', 'index.html', 'style.css', 'app.js', 'data/exercises.js', 'library.js', 'manifest.webmanifest',
   'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {

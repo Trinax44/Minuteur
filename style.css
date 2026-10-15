@@ -312,8 +312,7 @@ button.item:active { background: var(--surface-2); }
 
 .run-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 0; }
 .run-ex { text-align: center; }
-.run-ex-anim { width: min(50vw, 220px); height: min(42vw, 185px); margin: 0 auto 10px; background: var(--anim-bg); border-radius: 22px; overflow: hidden; }
-.run-ex-anim svg { transform: scale(1.12) translateY(-4%); }
+.run-ex-anim { width: min(64vw, 270px); aspect-ratio: 3 / 2; margin: 0 auto 10px; background: var(--anim-bg); border-radius: 22px; overflow: hidden; }
 .run-ex-anim:empty { display: none; }
 .run-ex-name { font-size: 22px; font-weight: 800; letter-spacing: -.3px; padding: 0 10px; }
 .run-ex-name:empty { display: none; }
@@ -400,7 +399,7 @@ button.item:active { background: var(--surface-2); }
 .lib-count { color: var(--muted); font-size: 13px; margin: 6px 2px 10px; }
 .lib-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .lib-card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; text-align: left; display: flex; flex-direction: column; }
-.lib-card .anim { aspect-ratio: 1; background: var(--anim-bg); }
+.lib-card .anim { aspect-ratio: 4 / 3; background: var(--anim-bg); }
 .lib-card .info { padding: 8px 12px 12px; }
 .lib-card b { display: block; font-size: 15px; line-height: 1.2; }
 .lib-card span { color: var(--muted); font-size: 12px; }
@@ -408,8 +407,7 @@ button.item:active { background: var(--surface-2); }
 .lib-card.custom { justify-content: center; align-items: center; text-align: center; gap: 8px; padding: 16px; color: var(--muted); border-style: dashed; }
 .lib-card.custom svg { width: 30px; height: 30px; color: var(--accent); }
 
-.detail-anim { aspect-ratio: 1.15; border-radius: 26px; background: var(--anim-bg); border: 1px solid var(--line); margin-bottom: 14px; overflow: hidden; }
-.detail-anim svg { width: 100%; height: 100%; }
+.detail-anim { aspect-ratio: 3 / 2; border-radius: 26px; background: var(--anim-bg); border: 1px solid var(--line); margin-bottom: 14px; overflow: hidden; }
 .detail h3 { font-size: 26px; margin: 0 0 6px; letter-spacing: -.4px; }
 .detail .muscles { color: var(--muted); font-size: 15px; margin: 8px 0 14px; }
 .cues { counter-reset: c; list-style: none; padding: 0; margin: 0 0 6px; }
@@ -428,3 +426,13 @@ svg.manq { width: 100%; height: 100%; display: block; }
 
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* Photos d'exercice (free-exercise-db) : deux images en fondu pour montrer le geste */
+.ph { position: relative; width: 100%; height: 100%; background: #fff; }
+.ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ph img.b { opacity: 0; animation: phx 2.6s ease-in-out infinite; }
+@keyframes phx { 0%, 38% { opacity: 0; } 50%, 88% { opacity: 1; } 100% { opacity: 0; } }
+.ph-empty { display: grid; place-items: center; background: var(--surface-2); color: var(--muted); font-family: var(--num); font-weight: 800; font-size: 28px; }
+.detail .muscles span { font-size: 14px; }
+.lib-card .info span { text-transform: none; }
+@media (prefers-reduced-motion: reduce) { .ph img.b { animation-duration: 5s; } }
